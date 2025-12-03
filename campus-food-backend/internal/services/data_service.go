@@ -27,7 +27,7 @@ type Merchant struct {
 	CanteenID     int    `json:"canteen_id" db:"canteen_id"`
 	Description   string `json:"description,omitempty" db:"description"`
 	BusinessHours string `json:"business_hours,omitempty" db:"business_hours"`
-	Phone         string `json:"phone,omitempty" db:"mer_phone"` // 注意数据库字段名是 mer_phone
+	Phone         string `json:"phone,omitempty" db:"mer_phone"`
 }
 
 type Dish struct {

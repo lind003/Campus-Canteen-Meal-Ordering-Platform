@@ -1,7 +1,7 @@
 <!-- views/Home.vue -->
 <template>
   <div>
-    <div class="header-actions">
+   <div class="header-actions">
       <h4>校园代买平台</h4>
       <button 
         v-if="auth.isAuthenticated"

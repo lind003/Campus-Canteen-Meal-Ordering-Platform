@@ -5,16 +5,16 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
-
+import router from './router'
 import 'bootstrap/dist/css/bootstrap.min.css'
-
+import 'bootstrap/dist/js/bootstrap.bundle.min.js' 
 
 
 const app = createApp(App)
 const pinia = createPinia()
 app.use(ElementPlus)
 app.use(pinia)
-
+app.use(router)
 // 删除或注释掉下面这两行
 // import { useAuthStore } from './stores/auth'
 // const authStore = useAuthStore()

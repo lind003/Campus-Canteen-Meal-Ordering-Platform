@@ -20,6 +20,10 @@
           <input v-model="form.grade" type="text" placeholder="请输入年级" required>
         </div>
         <div class="form-group">
+          <label>校园卡号:</label>
+          <input v-model="form.card_no" type="text" placeholder="例如2012001000" required>
+        </div>
+        <div class="form-group">
           <label>密码:</label>
           <input v-model="form.password" type="password" placeholder="请输入密码" required>
         </div>
@@ -32,6 +36,7 @@
           <select v-model="form.role">
             <option value="student">学生</option>
             <option value="teacher">教师</option>
+            <option value="runner">跑腿员</option>
           </select>
         </div>
         <div class="form-actions">
@@ -61,7 +66,8 @@ const form = ref({
   grade: '',
   password: '',
   confirmPassword: '',
-  role: 'student'
+  role: 'student',
+  card_no:''
 })
 const loading = ref(false)
 

@@ -6,7 +6,7 @@ const api = axios.create({
   timeout: 10000
 })
 
-// 请求拦截器 - 自动添加 token
+// 请求拦截器 
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token')
@@ -34,10 +34,13 @@ api.interceptors.response.use(
   }
 )
 
-// 认证相关 API
+// 认证相关 API（包含个人中心）
 export const authAPI = {
   login: (data) => api.post('/auth/login', data),
   register: (data) => api.post('/auth/register', data),
+  profile: () => api.get('/auth/profile'),
+  updateProfile: (data) => api.put('/auth/profile', data),
+  updatePassword: (data) => api.put('/auth/password', data),
 }
 
 // 订单相关 API 
@@ -109,5 +112,7 @@ export const complaintAPI = {
   create: (data) => api.post('/complaints', data),
   list: () => api.get('/complaints'),
 }
+
+
 
 export default api

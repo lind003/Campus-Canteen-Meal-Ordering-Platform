@@ -56,14 +56,15 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	})
 }
 
+// 个人信息
 func (h *AuthHandler) GetProfile(c *gin.Context) {
 	userID := c.GetInt("user_id")
-
-	// 从数据库获取完整的用户信息
-	utils.Success(c, gin.H{
-		"user_id": userID,
-		"message": "获取用户信息成功",
-	})
+	u, err := h.authService.GetProfile(userID)
+	if err != nil {
+		utils.Error(c, err.Error())
+		return
+	}
+	utils.Success(c, u)
 }
 
 func (h *AuthHandler) Logout(c *gin.Context) {
@@ -77,4 +78,34 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 	}
 
 	utils.SuccessWithMessage(c, "退出登录成功", nil)
+}
+
+// 修改资料
+func (h *AuthHandler) UpdateProfile(c *gin.Context) {
+	userID := c.GetInt("user_id")
+	var req models.UpdateProfileRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.Error(c, "参数错误: "+err.Error())
+		return
+	}
+	if err := h.authService.UpdateProfile(userID, req); err != nil {
+		utils.Error(c, err.Error())
+		return
+	}
+	utils.SuccessWithMessage(c, "资料已更新", nil)
+}
+
+// 修改密码
+func (h *AuthHandler) UpdatePassword(c *gin.Context) {
+	userID := c.GetInt("user_id")
+	var req models.UpdatePasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.Error(c, "参数错误: "+err.Error())
+		return
+	}
+	if err := h.authService.UpdatePassword(userID, req); err != nil {
+		utils.Error(c, err.Error())
+		return
+	}
+	utils.SuccessWithMessage(c, "密码已修改，请重新登录", nil)
 }

@@ -10,12 +10,39 @@ const auth = useAuthStore()
 
 const orders = ref([])
 const loading = ref(false)
+const shownDetail = ref(null)          // 当前展开的订单ID
+const toggleDetail = (id) => {
+  shownDetail.value = shownDetail.value === id ? null : id
+}
 const handleCreateOrder = () => {
   console.log('创建订单按钮被点击')
   console.log('当前认证状态:', auth.isAuthenticated)
   console.log('当前用户:', auth.user)
   emit('create-order')
 }
+
+const counterPart = (order) => {
+  if (auth.user?.role === 'runner') {
+    // 跑腿员 看下单人
+    return {
+      name: order.demander_name,
+      phone: order.demander_phone,
+       card: order.demander_card,
+      addr: order.delivery_address,
+      tip:  order.tip
+    }
+  } else {
+    // 下单人看跑腿员
+    return {
+      name: order.runner_name,
+      card: order.runner_card,
+      phone: order.runner_phone,
+      addr: order.delivery_address,   
+      tip:  order.tip
+    }
+  }
+}
+
 // 状态映射
 const statusMap = {
   'pending': { text: '待接单', type: 'warning' },
@@ -211,6 +238,21 @@ onMounted(() => {
           
           <!-- 操作按钮 -->
           <div class="d-flex gap-2">
+            <!-- 详情按钮 -->
+          <button class="btn btn-outline-secondary btn-sm"
+            @click="toggleDetail(order.order_id)">
+          详细信息
+          </button>
+
+          <!-- 展开区域 -->
+          <div v-if="shownDetail === order.order_id"
+            class="w-100 mt-2 small text-muted">
+            <div><strong>姓名：</strong>{{ counterPart(order).name }}</div>
+            <div><strong>校园卡号：</strong>{{ counterPart(order).card || '暂无' }}</div>
+            <div><strong>联系方式：</strong>{{ counterPart(order).phone }}</div>
+            <div><strong>送达地址：</strong>{{ counterPart(order).addr }}</div>
+            <div><strong>小费：</strong>¥{{ counterPart(order).tip.toFixed(2) }}</div>
+          </div>
             <!-- 接单按钮 -->
             <button 
               v-if="canTakeOrder(order)"

@@ -102,14 +102,20 @@ func main() {
 	api := r.Group("/api")
 	{
 		// 认证路由
-		auth := api.Group("/auth")
+		//无需认证
+		pub := api.Group("/auth")
 		{
-			auth.POST("/login", authHandler.Login)
-			auth.POST("/register", authHandler.Register)
-			auth.GET("/profile", middleware.AuthMiddleware(), authHandler.GetProfile)
-			auth.POST("/logout", middleware.AuthMiddleware(), authHandler.Logout)
+			pub.POST("/login", authHandler.Login)
+			pub.POST("/register", authHandler.Register)
 		}
-
+		//需要认证
+		pri := api.Group("/auth").Use(middleware.AuthMiddleware())
+		{
+			pri.GET("/profile", authHandler.GetProfile)
+			pri.PUT("/profile", authHandler.UpdateProfile)
+			pri.PUT("/password", authHandler.UpdatePassword)
+			pri.POST("logout", authHandler.Logout)
+		}
 		// 订单路由
 		orders := api.Group("/orders")
 		orders.Use(middleware.AuthMiddleware())

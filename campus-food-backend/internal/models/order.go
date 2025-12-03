@@ -25,6 +25,9 @@ type Order struct {
 	RunnerName    string `json:"runner_name,omitempty"`
 	CanteenName   string `json:"canteen_name,omitempty"`
 	MerchantName  string `json:"merchant_name,omitempty"`
+	DemanderCard  string `json:"demander_card,omitempty"`
+	RunnerPhone   string `json:"runner_phone,omitempty"`
+	RunnerCard    string `json:"runner_card,omitempty"`
 }
 
 type OrderDetail struct {

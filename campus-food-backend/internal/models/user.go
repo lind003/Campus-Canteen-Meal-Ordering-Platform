@@ -14,6 +14,7 @@ type User struct {
 	Role      string    `json:"role" db:"role"`
 	Status    string    `json:"status" db:"status"`
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	CardNo    string    `json:"card_no" db:"card_no"`
 }
 
 type LoginRequest struct {
@@ -28,4 +29,21 @@ type RegisterRequest struct {
 	Phone    string `json:"phone" binding:"required"`
 	Password string `json:"password" binding:"required"`
 	Role     string `json:"role" binding:"required"`
+	CardNo   string `json:"card_no"` // 校园卡号
+}
+
+// 修改资料
+type UpdateProfileRequest struct {
+	Name     string `json:"name" binding:"required"`
+	Phone    string `json:"phone" binding:"required"`
+	College  string `json:"college"`
+	Grade    string `json:"grade"`
+	CardNo   string `json:"card_no"`
+	Password string `json:"password" binding:"required"` // 当前密码确认
+}
+
+// 修改密码
+type UpdatePasswordRequest struct {
+	OldPassword string `json:"old_password" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required,min=6"`
 }

@@ -218,19 +218,25 @@ func (s *OrderService) GetOrders(userID int, status string) ([]models.Order, err
 	log.Println("=== GetOrders 开始 ===")
 
 	query := `
-        SELECT 
-            o.order_id, o.demander_id, o.runner_id, o.canteen_id, o.merchant_id,
-            o.status, o.order_time, o.fetch_time, o.finish_time, o.tip, o.total_amount,
-            o.delivery_address, o.contact_phone,
-            u.name as demander_name, u.phone as demander_phone,
-            r.name as runner_name,
-            c.canteen_name, m.merchant_name
-        FROM orders o
-        LEFT JOIN user u ON o.demander_id = u.user_id
-        LEFT JOIN user r ON o.runner_id = r.user_id
-        LEFT JOIN canteen c ON o.canteen_id = c.canteen_id
-        LEFT JOIN merchant m ON o.merchant_id = m.merchant_id
-        WHERE 1=1
+        SELECT
+    	o.order_id, o.demander_id, o.runner_id, o.canteen_id, o.merchant_id,
+    	o.status, o.order_time, o.fetch_time, o.finish_time, o.tip, o.total_amount,
+    	o.delivery_address, o.contact_phone,
+
+    	u.name  AS demander_name,
+    	u.phone AS demander_phone,
+		u.card_no AS demander_card,
+    	r.name  AS runner_name,
+    	r.phone AS runner_phone,
+    	r.card_no AS runner_card,
+
+    	c.canteen_name, m.merchant_name
+		FROM orders o
+		LEFT JOIN user u ON o.demander_id = u.user_id
+		LEFT JOIN user r ON o.runner_id   = r.user_id      -- 新增
+		LEFT JOIN canteen c ON o.canteen_id   = c.canteen_id
+		LEFT JOIN merchant m ON o.merchant_id = m.merchant_id
+		WHERE 1=1
     `
 
 	var args []interface{}
@@ -257,13 +263,15 @@ func (s *OrderService) GetOrders(userID int, status string) ([]models.Order, err
 		var runnerID *int
 		var fetchTime, finishTime *time.Time
 		var tip, totalAmount *float64
-		var demanderName, demanderPhone, runnerName, canteenName, merchantName *string
+		var demanderName, demanderPhone, demanderCard, runnerName, runnerPhone, runnerCard, canteenName, merchantName *string
 
 		err := rows.Scan(
 			&order.OrderID, &order.DemanderID, &runnerID, &order.CanteenID, &order.MerchantID,
 			&order.Status, &order.OrderTime, &fetchTime, &finishTime,
 			&tip, &totalAmount, &order.DeliveryAddress, &order.ContactPhone,
-			&demanderName, &demanderPhone, &runnerName, &canteenName, &merchantName,
+			&demanderName, &demanderPhone, &demanderCard,
+			&runnerName, &runnerPhone, &runnerCard,
+			&canteenName, &merchantName,
 		)
 		if err != nil {
 			log.Printf("❌ 数据扫描错误: %v\n", err)
@@ -304,7 +312,18 @@ func (s *OrderService) GetOrders(userID int, status string) ([]models.Order, err
 		if merchantName != nil {
 			order.MerchantName = *merchantName
 		}
-
+		if demanderCard != nil {
+			order.DemanderCard = *demanderCard
+		}
+		if runnerName != nil {
+			order.RunnerName = *runnerName
+		}
+		if runnerPhone != nil {
+			order.RunnerPhone = *runnerPhone
+		}
+		if runnerCard != nil {
+			order.RunnerCard = *runnerCard
+		}
 		orders = append(orders, order)
 		log.Printf("✅ 扫描成功: order_id=%d, status=%s, amount=%.2f\n",
 			order.OrderID, order.Status, order.TotalAmount)

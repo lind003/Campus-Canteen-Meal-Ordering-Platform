@@ -6,6 +6,8 @@ import RegisterModal from './components/Register.vue'
 import OrderList from './components/OrderList.vue'
 import CreateOrderModal from './components/CreateOrder.vue'
 import ComplaintModal from './components/Complaint.vue'
+import { useRouter } from 'vue-router'
+
 
 const auth = useAuthStore()
 const showLogin = ref(false)
@@ -13,18 +15,27 @@ const showRegister = ref(false)
 const showCreateOrder = ref(false)
 const showComplaint = ref(false)
 const selectedOrderId = ref(null)
-const showUserInfoModal = ref(false)
+
+const router = useRouter()
 
 
+const handleClick=()=>{
+  console.log('🔥 按钮被点击了')
+  console.log('当前路由对象:', router.currentRoute.value)
+  console.log('准备跳转 /user')
+  router.push('/user').then(() => {
+    console.log('✅ 路由跳转成功')
+  }).catch(err => {
+    console.error('❌ 路由跳转失败:', err)
+  })
+}
 
 const logout = () => {
   auth.logout()
   // 刷新页面确保状态清除
   window.location.reload()
 }
-const showUserInfo = () => {
-  showUserInfoModal.value = true
-}
+
 const handleLoginSuccess = () => {
   showLogin.value = false
   console.log('登录成功回调 - 当前状态:', {
@@ -66,7 +77,7 @@ onMounted(() => {
   <div id="app">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container">
-        <span class="navbar-brand">校园食堂代买餐</span>
+        <span class="navbar-brand">校园食堂代买餐平台</span>
         <div class="navbar-nav ms-auto">
           <template v-if="auth.isAuthenticated && auth.user">
             <!-- 用户信息下拉菜单 -->
@@ -75,7 +86,7 @@ onMounted(() => {
                 欢迎, {{ auth.user.name }}
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#" @click="showUserInfo">个人信息</a></li>
+                <li><button class="dropdown-item" @click="handleClick">个人信息</button></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="#" @click="logout">退出登录</a></li>
               </ul>
@@ -95,7 +106,7 @@ onMounted(() => {
 
     <main class="container mt-4">
       <!-- 主页内容 -->
-      <OrderList 
+      <router-view 
         :filter="'all'"
         @create-order="showCreateOrder = true"
         @complain="handleComplaint"
